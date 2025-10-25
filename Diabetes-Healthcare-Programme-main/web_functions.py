@@ -2,37 +2,25 @@ import numpy as np
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 import streamlit as st
-import os
 
 # -----------------------------
-# Load dataset (robust for deployment)
+# Load dataset (deployment-proof)
 # -----------------------------
 @st.cache_data()
 def load_data():
     """
-    Load the diabetes dataset from local file or GitHub.
+    Load the diabetes dataset from a GitHub raw URL.
     Returns:
         df, X, y
     """
-    import os
-    import pandas as pd
-    import streamlit as st
-
-    # Use working directory instead of __file__
-    local_path = os.path.join(os.getcwd(), "diabetes.csv")
-
+    url = "https://raw.githubusercontent.com/Nahush18/Medical_AI_Chatbot/main/Diabetes-Healthcare-Programme-main/diabetes.csv"
+    
     try:
-        if os.path.exists(local_path):
-            df = pd.read_csv(local_path)
-            st.info("✅ Loaded dataset from local file.")
-        else:
-            # Fallback: GitHub raw link
-            url = "https://raw.githubusercontent.com/Nahush18/Medical_AI_Chatbot/main/Diabetes-Healthcare-Programme-main/diabetes.csv"
-            df = pd.read_csv(url)
-            st.info("✅ Loaded dataset from GitHub URL.")
+        df = pd.read_csv(url)
+        st.info("✅ Loaded dataset from GitHub URL.")
     except Exception as e:
         st.error(f"❌ Failed to load dataset: {e}")
-        st.stop()
+        st.stop()  # Stop execution if data cannot be loaded
 
     # Features and label
     X = df[['HbA1c_level', 'Pregnancies', 'Glucose', 'BloodPressure',
@@ -40,7 +28,6 @@ def load_data():
     y = df['Outcome']
 
     return df, X, y
-
 
 
 # -----------------------------
@@ -55,18 +42,10 @@ def train_model(X, y):
         score: Training accuracy
     """
     model = DecisionTreeClassifier(
-        ccp_alpha=0.0,                # Pruning control
-        class_weight=None,            # Uniform weights
-        criterion='entropy',          # Split quality
-        max_depth=4,                  # Tree depth
-        max_features=None,            # Use all features
-        max_leaf_nodes=None,          # No limit on leaves
-        min_impurity_decrease=0.0,    # Min impurity for split
-        min_samples_leaf=1,           # Min samples per leaf
-        min_samples_split=2,          # Min samples to split
-        min_weight_fraction_leaf=0.0,
-        random_state=42,              # Reproducible
-        splitter='best'               # Best split
+        ccp_alpha=0.0,                
+        criterion='entropy',          
+        max_depth=4,                  
+        random_state=42               
     )
 
     model.fit(X, y)
@@ -90,17 +69,14 @@ def predict(X, y, features):
         score: Model training accuracy
     """
     model, score = train_model(X, y)
-
-    # Ensure input features are in correct shape
     features = np.array(features).reshape(1, -1)
-
     prediction = model.predict(features)
 
     return prediction[0], score
 
 
 # -----------------------------
-# Example Usage in Streamlit
+# Example Streamlit Interface
 # -----------------------------
 if __name__ == "__main__":
     st.title("Diabetes Prediction App")
