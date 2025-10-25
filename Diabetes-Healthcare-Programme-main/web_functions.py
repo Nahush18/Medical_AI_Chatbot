@@ -10,27 +10,29 @@ import os
 @st.cache_data()
 def load_data():
     """
-    Load the diabetes dataset from a local file or a remote GitHub URL.
+    Load the diabetes dataset from local file or GitHub.
     Returns:
-        df (DataFrame): Complete dataset
-        X (DataFrame): Features for training
-        y (Series): Target variable
+        df, X, y
     """
-    # Define local path relative to this file
-    local_path = os.path.join(os.path.dirname(__file__), "diabetes.csv")
+    import os
+    import pandas as pd
+    import streamlit as st
+
+    # Use working directory instead of __file__
+    local_path = os.path.join(os.getcwd(), "diabetes.csv")
 
     try:
         if os.path.exists(local_path):
             df = pd.read_csv(local_path)
             st.info("✅ Loaded dataset from local file.")
         else:
-            # Fallback: GitHub raw CSV
+            # Fallback: GitHub raw link
             url = "https://raw.githubusercontent.com/Nahush18/Medical_AI_Chatbot/main/Diabetes-Healthcare-Programme-main/diabetes.csv"
             df = pd.read_csv(url)
             st.info("✅ Loaded dataset from GitHub URL.")
     except Exception as e:
         st.error(f"❌ Failed to load dataset: {e}")
-        st.stop()  # Stop execution if data cannot be loaded
+        st.stop()
 
     # Features and label
     X = df[['HbA1c_level', 'Pregnancies', 'Glucose', 'BloodPressure',
@@ -38,6 +40,7 @@ def load_data():
     y = df['Outcome']
 
     return df, X, y
+
 
 
 # -----------------------------
