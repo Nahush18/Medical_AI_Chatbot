@@ -7,7 +7,7 @@ import streamlit as st
 @st.cache_data()
 
 def load_data():
-    df=pd.read_csv('https://github.com/Nahush18/Medical_AI_Chatbot/blob/main/Diabetes-Healthcare-Programme-main/diabetes.csv')
+    df = pd.read_csv('https://raw.githubusercontent.com/Nahush18/Medical_AI_Chatbot/main/Diabetes-Healthcare-Programme-main/diabetes.csv')
     X = df[['HbA1c_level','Pregnancies','Glucose','BloodPressure','SkinThickness','Insulin','BMI','DiabetesPedigreeFunction','Age']]
     y = df['Outcome']
 
